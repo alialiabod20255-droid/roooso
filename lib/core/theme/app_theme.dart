@@ -2,17 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Colors
-  static const Color primaryPink = Color(0xFFE91E63);
-  static const Color lightPink = Color(0xFFF8BBD9);
-  static const Color darkPink = Color(0xFFAD1457);
-  static const Color accentPurple = Color(0xFF9C27B0);
-  static const Color lightPurple = Color(0xFFE1BEE7);
+  // Futuristic Colors - 2080 Style
+  static const Color primaryPink = Color(0xFFFF0080);
+  static const Color lightPink = Color(0xFFFF4DA6);
+  static const Color darkPink = Color(0xFFCC0066);
+  static const Color accentPurple = Color(0xFF8A2BE2);
+  static const Color lightPurple = Color(0xFFB347D9);
   static const Color roseGold = Color(0xFFE8B4B8);
   static const Color softWhite = Color(0xFFFFFBFE);
-  static const Color darkGrey = Color(0xFF2C2C2C);
+  static const Color darkGrey = Color(0xFF1A1A1A);
+  
+  // Futuristic Neon Colors
+  static const Color neonBlue = Color(0xFF00FFFF);
+  static const Color neonPurple = Color(0xFF9D4EDD);
+  static const Color neonPink = Color(0xFFFF006E);
+  static const Color holographicBlue = Color(0xFF4CC9F0);
+  static const Color holographicPurple = Color(0xFF7209B7);
+  static const Color glowWhite = Color(0xFFF8F9FA);
+  static const Color metallicGray = Color(0xFF495057);
+  static const Color deepSpace = Color(0xFF0D1117);
+  static const Color cosmicPurple = Color(0xFF161B22);
 
-  // Light Theme
+  // Light Theme - Futuristic 2080
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -20,122 +31,162 @@ class AppTheme {
 
       // Color Scheme
       colorScheme: const ColorScheme.light(
-        primary: primaryPink,
-        secondary: accentPurple,
-        surface: softWhite,
+        primary: neonPink,
+        secondary: neonPurple,
+        tertiary: neonBlue,
+        surface: glowWhite,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onSurface: darkGrey,
+        onSurface: deepSpace,
+        background: Color(0xFFF0F2F5),
+        onBackground: deepSpace,
+        surfaceVariant: Color(0xFFE3F2FD),
       ),
 
       // Scaffold Background
-      scaffoldBackgroundColor: const Color(0xFFFFF8FA),
+      scaffoldBackgroundColor: const Color(0xFFF0F2F5),
 
-      // Color Scheme
-      // colorScheme: const ColorScheme.light(
-      //   primary: primaryPink,
-      //   secondary: accentPurple,
-      //   surface: softWhite,
-      //   onPrimary: Colors.white,
-      //   onSecondary: Colors.white,
-      //   onSurface: darkGrey,
-      // ),
-      //
       // App Bar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.cairo(
+        titleTextStyle: GoogleFonts.orbitron(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: darkGrey,
+          color: deepSpace,
+          letterSpacing: 1.2,
         ),
-        iconTheme: const IconThemeData(color: darkGrey),
+        iconTheme: const IconThemeData(color: deepSpace),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+        ),
       ),
 
-      // Text Theme
-      textTheme: GoogleFonts.cairoTextTheme().copyWith(
-        displayLarge: GoogleFonts.cairo(
+      // Text Theme - Futuristic Fonts
+      textTheme: GoogleFonts.orbitronTextTheme().copyWith(
+        displayLarge: GoogleFonts.orbitron(
           fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: darkGrey,
+          color: deepSpace,
+          letterSpacing: 1.5,
         ),
-        displayMedium: GoogleFonts.cairo(
+        displayMedium: GoogleFonts.orbitron(
           fontSize: 28,
           fontWeight: FontWeight.bold,
-          color: darkGrey,
+          color: deepSpace,
+          letterSpacing: 1.2,
         ),
-        headlineLarge: GoogleFonts.cairo(
+        headlineLarge: GoogleFonts.orbitron(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: darkGrey,
+          color: deepSpace,
+          letterSpacing: 1.0,
         ),
-        headlineMedium: GoogleFonts.cairo(
+        headlineMedium: GoogleFonts.orbitron(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: darkGrey,
+          color: deepSpace,
+          letterSpacing: 0.8,
         ),
-        bodyLarge: GoogleFonts.cairo(
+        bodyLarge: GoogleFonts.inter(
           fontSize: 16,
-          color: darkGrey,
+          color: deepSpace,
+          letterSpacing: 0.5,
         ),
-        bodyMedium: GoogleFonts.cairo(
+        bodyMedium: GoogleFonts.inter(
           fontSize: 14,
-          color: darkGrey,
+          color: deepSpace,
+          letterSpacing: 0.3,
         ),
       ),
 
-      // Card Theme
+      // Card Theme - Glassmorphism
       cardTheme: CardTheme(
-        elevation: 4,
-        shadowColor: primaryPink.withOpacity(0.2),
+        elevation: 0,
+        color: Colors.white.withOpacity(0.7),
+        shadowColor: neonPink.withOpacity(0.2),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(
+            color: Colors.white.withOpacity(0.2),
+            width: 1,
+          ),
         ),
       ),
 
-      // Elevated Button Theme
+      // Elevated Button Theme - Futuristic
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryPink,
+          backgroundColor: neonPink,
           foregroundColor: Colors.white,
-          elevation: 4,
-          shadowColor: primaryPink.withOpacity(0.3),
+          elevation: 0,
+          shadowColor: neonPink.withOpacity(0.5),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: GoogleFonts.cairo(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          textStyle: GoogleFonts.orbitron(
             fontSize: 16,
             fontWeight: FontWeight.w600,
+            letterSpacing: 1.0,
           ),
+        ).copyWith(
+          overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.1)),
         ),
       ),
 
-      // Input Decoration Theme
+      // Input Decoration Theme - Glassmorphism
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.white.withOpacity(0.8),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: lightPink),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: neonBlue.withOpacity(0.3),
+            width: 1,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: lightPink),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: neonBlue.withOpacity(0.3),
+            width: 1,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryPink, width: 2),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(
+            color: neonPink,
+            width: 2,
+          ),
         ),
-        labelStyle: GoogleFonts.cairo(color: darkGrey),
-        hintStyle: GoogleFonts.cairo(color: Colors.grey),
+        labelStyle: GoogleFonts.inter(
+          color: deepSpace,
+          fontWeight: FontWeight.w500,
+        ),
+        hintStyle: GoogleFonts.inter(
+          color: Colors.grey.shade600,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
+      ),
+
+      // Bottom Navigation Bar Theme
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        selectedItemColor: neonPink,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }
 
-  // Dark Theme
+  // Dark Theme - Futuristic 2080
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -143,107 +194,157 @@ class AppTheme {
 
       // Color Scheme
       colorScheme: const ColorScheme.dark(
-        primary: lightPink,
-        secondary: lightPurple,
-        surface: Color(0xFF1E1E1E),
-        background: Color(0xFF121212),
-        onPrimary: darkGrey,
-        onSecondary: darkGrey,
-        onSurface: Colors.white,
-        onBackground: Colors.white,
+        primary: neonPink,
+        secondary: neonPurple,
+        tertiary: neonBlue,
+        surface: cosmicPurple,
+        background: deepSpace,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: glowWhite,
+        onBackground: glowWhite,
+        surfaceVariant: Color(0xFF21262D),
       ),
+
+      // Scaffold Background
+      scaffoldBackgroundColor: deepSpace,
 
       // App Bar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.cairo(
+        titleTextStyle: GoogleFonts.orbitron(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: glowWhite,
+          letterSpacing: 1.2,
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: glowWhite),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
       ),
 
       // Text Theme
-      textTheme: GoogleFonts.cairoTextTheme(ThemeData.dark().textTheme).copyWith(
-        displayLarge: GoogleFonts.cairo(
+      textTheme: GoogleFonts.orbitronTextTheme(ThemeData.dark().textTheme).copyWith(
+        displayLarge: GoogleFonts.orbitron(
           fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: glowWhite,
+          letterSpacing: 1.5,
         ),
-        displayMedium: GoogleFonts.cairo(
+        displayMedium: GoogleFonts.orbitron(
           fontSize: 28,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: glowWhite,
+          letterSpacing: 1.2,
         ),
-        headlineLarge: GoogleFonts.cairo(
+        headlineLarge: GoogleFonts.orbitron(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: glowWhite,
+          letterSpacing: 1.0,
         ),
-        headlineMedium: GoogleFonts.cairo(
+        headlineMedium: GoogleFonts.orbitron(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: Colors.white,
+          color: glowWhite,
+          letterSpacing: 0.8,
         ),
-        bodyLarge: GoogleFonts.cairo(
+        bodyLarge: GoogleFonts.inter(
           fontSize: 16,
-          color: Colors.white,
+          color: glowWhite,
+          letterSpacing: 0.5,
         ),
-        bodyMedium: GoogleFonts.cairo(
+        bodyMedium: GoogleFonts.inter(
           fontSize: 14,
-          color: Colors.white,
+          color: glowWhite,
+          letterSpacing: 0.3,
         ),
       ),
 
-      // Card Theme
+      // Card Theme - Dark Glassmorphism
       cardTheme: CardTheme(
-        elevation: 4,
-        shadowColor: lightPink.withOpacity(0.2),
+        elevation: 0,
+        color: cosmicPurple.withOpacity(0.8),
+        shadowColor: neonPink.withOpacity(0.3),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(
+            color: neonBlue.withOpacity(0.2),
+            width: 1,
+          ),
         ),
-        color: const Color(0xFF2C2C2C),
       ),
 
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: lightPink,
-          foregroundColor: darkGrey,
-          elevation: 4,
-          shadowColor: lightPink.withOpacity(0.3),
+          backgroundColor: neonPink,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shadowColor: neonPink.withOpacity(0.5),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: GoogleFonts.cairo(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          textStyle: GoogleFonts.orbitron(
             fontSize: 16,
             fontWeight: FontWeight.w600,
+            letterSpacing: 1.0,
           ),
+        ).copyWith(
+          overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.1)),
         ),
       ),
 
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFF2C2C2C),
+        fillColor: cosmicPurple.withOpacity(0.8),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: lightPink.withOpacity(0.5)),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: neonBlue.withOpacity(0.3),
+            width: 1,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: lightPink.withOpacity(0.5)),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: neonBlue.withOpacity(0.3),
+            width: 1,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: lightPink, width: 2),
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(
+            color: neonPink,
+            width: 2,
+          ),
         ),
-        labelStyle: GoogleFonts.cairo(color: Colors.white),
-        hintStyle: GoogleFonts.cairo(color: Colors.grey),
+        labelStyle: GoogleFonts.inter(
+          color: glowWhite,
+          fontWeight: FontWeight.w500,
+        ),
+        hintStyle: GoogleFonts.inter(
+          color: Colors.grey.shade400,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
+      ),
+
+      // Bottom Navigation Bar Theme
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        selectedItemColor: neonPink,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

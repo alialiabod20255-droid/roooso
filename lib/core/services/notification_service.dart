@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -67,7 +68,7 @@ class NotificationService {
   
   static void _onNotificationTapped(NotificationResponse response) {
     // Handle notification tap
-    print('Notification tapped: ${response.payload}');
+    debugPrint('Notification tapped: ${response.payload}');
   }
   
   static void _handleForegroundMessage(RemoteMessage message) {
@@ -80,7 +81,7 @@ class NotificationService {
   
   static void _handleNotificationTap(RemoteMessage message) {
     // Handle notification tap when app is in background
-    print('Notification opened app: ${message.data}');
+    debugPrint('Notification opened app: ${message.data}');
   }
   
   static Future<String?> getToken() async {

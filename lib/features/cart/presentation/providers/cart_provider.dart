@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -33,8 +34,14 @@ class CartProvider extends ChangeNotifier {
           .map((doc) => CartItemModel.fromFirestore(doc))
           .toList();
 
+      if (kDebugMode) {
+        print('CartProvider: Loaded ${_items.length} items for userId: $userId');
+      }
       notifyListeners();
     } catch (e) {
+      if (kDebugMode) {
+        print('CartProvider: Error loading cart: $e');
+      }
       _setError('فشل تحميل السلة');
     } finally {
       _setLoading(false);
@@ -52,6 +59,7 @@ class CartProvider extends ChangeNotifier {
     String? selectedColor,
     String? giftWrap,
     String? greetingCard,
+    String? vendorId, // Added vendorId
   }) async {
     try {
       _setLoading(true);
@@ -59,17 +67,18 @@ class CartProvider extends ChangeNotifier {
 
       // Check if item already exists with same options
       final existingItemIndex = _items.indexWhere((item) =>
-          item.productId == productId &&
+      item.productId == productId &&
           item.selectedSize == selectedSize &&
           item.selectedColor == selectedColor &&
           item.giftWrap == giftWrap &&
-          item.greetingCard == greetingCard);
+          item.greetingCard == greetingCard &&
+          item.vendorId == vendorId);
 
       if (existingItemIndex != -1) {
         // Update existing item quantity
         final existingItem = _items[existingItemIndex];
         final newQuantity = existingItem.quantity + quantity;
-        
+
         await FirebaseService.cartCollection
             .doc(userId)
             .collection('items')
@@ -90,6 +99,7 @@ class CartProvider extends ChangeNotifier {
           selectedColor: selectedColor,
           giftWrap: giftWrap,
           greetingCard: greetingCard,
+          vendorId: vendorId, // Added vendorId
           addedAt: DateTime.now(),
         );
 
@@ -109,12 +119,19 @@ class CartProvider extends ChangeNotifier {
           selectedColor: selectedColor,
           giftWrap: giftWrap,
           greetingCard: greetingCard,
+          vendorId: vendorId, // Added vendorId
           addedAt: DateTime.now(),
         ));
       }
 
+      if (kDebugMode) {
+        print('CartProvider: Added to cart: $productName (ID: $productId, VendorID: $vendorId)');
+      }
       notifyListeners();
     } catch (e) {
+      if (kDebugMode) {
+        print('CartProvider: Error adding to cart: $e');
+      }
       _setError('فشل إضافة المنتج للسلة');
     } finally {
       _setLoading(false);
@@ -139,7 +156,13 @@ class CartProvider extends ChangeNotifier {
         _items[itemIndex] = _items[itemIndex].copyWith(quantity: newQuantity);
         notifyListeners();
       }
+      if (kDebugMode) {
+        print('CartProvider: Updated quantity for item ID: $itemId to $newQuantity');
+      }
     } catch (e) {
+      if (kDebugMode) {
+        print('CartProvider: Error updating quantity: $e');
+      }
       _setError('فشل تحديث الكمية');
     }
   }
@@ -153,8 +176,14 @@ class CartProvider extends ChangeNotifier {
           .delete();
 
       _items.removeWhere((item) => item.id == itemId);
+      if (kDebugMode) {
+        print('CartProvider: Removed item from cart: $itemId');
+      }
       notifyListeners();
     } catch (e) {
+      if (kDebugMode) {
+        print('CartProvider: Error removing from cart: $e');
+      }
       _setError('فشل حذف المنتج من السلة');
     }
   }
@@ -174,8 +203,14 @@ class CartProvider extends ChangeNotifier {
       await batch.commit();
 
       _items.clear();
+      if (kDebugMode) {
+        print('CartProvider: Cart cleared for userId: $userId');
+      }
       notifyListeners();
     } catch (e) {
+      if (kDebugMode) {
+        print('CartProvider: Error clearing cart: $e');
+      }
       _setError('فشل مسح السلة');
     } finally {
       _setLoading(false);

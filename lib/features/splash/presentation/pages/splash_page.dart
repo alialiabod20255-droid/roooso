@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:lottie/lottie.dart';
 
 import '../../../../core/config/app_config.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -177,7 +176,7 @@ class _SplashPageState extends State<SplashPage>
                     height: 60,
                     child: CircularProgressIndicator(
                       strokeWidth: 3,
-                      valueColor: AlwaysStoppedAnimation<Color>(
+                      valueColor: AlwaysStoppedAnimation(
                         AppTheme.primaryPink,
                       ),
                     ),

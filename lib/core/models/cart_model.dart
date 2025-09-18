@@ -11,6 +11,7 @@ class CartItemModel {
   final String? selectedColor;
   final String? giftWrap;
   final String? greetingCard;
+  final String? vendorId; // Added vendorId
   final DateTime addedAt;
 
   CartItemModel({
@@ -24,6 +25,7 @@ class CartItemModel {
     this.selectedColor,
     this.giftWrap,
     this.greetingCard,
+    this.vendorId, // Added vendorId
     required this.addedAt,
   });
 
@@ -40,7 +42,8 @@ class CartItemModel {
       selectedColor: data['selectedColor'],
       giftWrap: data['giftWrap'],
       greetingCard: data['greetingCard'],
-      addedAt: (data['addedAt'] as Timestamp).toDate(),
+      vendorId: data['vendorId'], // Added vendorId
+      addedAt: (data['addedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 
@@ -55,6 +58,7 @@ class CartItemModel {
       'selectedColor': selectedColor,
       'giftWrap': giftWrap,
       'greetingCard': greetingCard,
+      'vendorId': vendorId, // Added vendorId
       'addedAt': Timestamp.fromDate(addedAt),
     };
   }
@@ -62,24 +66,32 @@ class CartItemModel {
   double get totalPrice => price * quantity;
 
   CartItemModel copyWith({
+    String? id,
+    String? productId,
+    String? productName,
+    String? productImage,
+    double? price,
     int? quantity,
     String? selectedSize,
     String? selectedColor,
     String? giftWrap,
     String? greetingCard,
+    String? vendorId, // Added vendorId
+    DateTime? addedAt,
   }) {
     return CartItemModel(
-      id: id,
-      productId: productId,
-      productName: productName,
-      productImage: productImage,
-      price: price,
+      id: id ?? this.id,
+      productId: productId ?? this.productId,
+      productName: productName ?? this.productName,
+      productImage: productImage ?? this.productImage,
+      price: price ?? this.price,
       quantity: quantity ?? this.quantity,
       selectedSize: selectedSize ?? this.selectedSize,
       selectedColor: selectedColor ?? this.selectedColor,
       giftWrap: giftWrap ?? this.giftWrap,
       greetingCard: greetingCard ?? this.greetingCard,
-      addedAt: addedAt,
+      vendorId: vendorId ?? this.vendorId, // Added vendorId
+      addedAt: addedAt ?? this.addedAt,
     );
   }
 }

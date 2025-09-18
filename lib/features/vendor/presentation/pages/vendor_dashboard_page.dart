@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/config/app_config.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -35,7 +36,6 @@ class _VendorDashboardPageState extends State<VendorDashboardPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Consumer2<AuthProvider, VendorProvider>(
@@ -174,7 +174,7 @@ class _VendorDashboardPageState extends State<VendorDashboardPage> {
                                 Icons.list_alt_outlined,
                                 Colors.blue,
                                 () {
-                                  Navigator.pushNamed(context, '/vendor-orders');
+                                  Navigator.pushNamed(context, AppConfig.vendorOrdersRoute);
                                 },
                               ),
                             ),
@@ -186,7 +186,7 @@ class _VendorDashboardPageState extends State<VendorDashboardPage> {
                                 Icons.analytics_outlined,
                                 Colors.orange,
                                 () {
-                                  Navigator.pushNamed(context, '/vendor-analytics');
+                                  Navigator.pushNamed(context, AppConfig.vendorAnalyticsRoute);
                                 },
                               ),
                             ),
@@ -215,7 +215,7 @@ class _VendorDashboardPageState extends State<VendorDashboardPage> {
                             ),
                             TextButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, '/vendor-orders');
+                                Navigator.pushNamed(context, AppConfig.vendorOrdersRoute);
                               },
                               child: Text(
                                 'عرض الكل',
@@ -239,11 +239,13 @@ class _VendorDashboardPageState extends State<VendorDashboardPage> {
                           },
                           onStatusUpdate: (orderId, status) async {
                             await vendorProvider.updateOrderStatus(orderId, status);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('تم تحديث حالة الطلب'),
-                              ),
-                            );
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('تم تحديث حالة الطلب'),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ],

@@ -244,7 +244,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                 height: 20,
                                                 child: CircularProgressIndicator(
                                                   strokeWidth: 2,
-                                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                                  valueColor: AlwaysStoppedAnimation(
                                                     Colors.white,
                                                   ),
                                                 ),

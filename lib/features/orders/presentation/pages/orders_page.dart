@@ -19,7 +19,10 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   void initState() {
     super.initState();
-    _loadOrders();
+    // تأخير تحميل الطلبات حتى اكتمال مرحلة البناء
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadOrders();
+    });
   }
 
   Future<void> _loadOrders() async {
@@ -27,7 +30,9 @@ class _OrdersPageState extends State<OrdersPage> {
     final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
 
     if (authProvider.isAuthenticated) {
+      print('Loading orders for userId: ${authProvider.currentUser!.id}');
       await ordersProvider.loadOrders(authProvider.currentUser!.id);
+      print('Number of orders loaded: ${ordersProvider.orders.length}');
     }
   }
 
@@ -80,7 +85,7 @@ class _OrdersPageState extends State<OrdersPage> {
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         '/home',
-                        (route) => false,
+                            (route) => false,
                       );
                     },
                     child: const Text('تصفح المنتجات'),
@@ -101,6 +106,7 @@ class _OrdersPageState extends State<OrdersPage> {
                 return OrderCard(
                   order: order,
                   onTap: () {
+                    print('Navigating to order details with orderId: ${order.id}');
                     Navigator.pushNamed(
                       context,
                       '/order-details',
@@ -109,36 +115,38 @@ class _OrdersPageState extends State<OrdersPage> {
                   },
                   onCancel: order.status == OrderStatus.pending
                       ? () async {
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('إلغاء الطلب'),
-                              content: const Text('هل أنت متأكد من إلغاء هذا الطلب؟'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, false),
-                                  child: const Text('لا'),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: Text(
-                                    'نعم، إلغاء',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('إلغاء الطلب'),
+                        content: const Text('هل أنت متأكد من إلغاء هذا الطلب؟'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('لا'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: Text(
+                              'نعم، إلغاء',
+                              style: TextStyle(color: Colors.red),
                             ),
-                          );
+                          ),
+                        ],
+                      ),
+                    );
 
-                          if (confirmed == true) {
-                            await ordersProvider.cancelOrder(order.id);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('تم إلغاء الطلب بنجاح'),
-                              ),
-                            );
-                          }
-                        }
+                    if (confirmed == true) {
+                      await ordersProvider.cancelOrder(order.id);
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('تم إلغاء الطلب بنجاح'),
+                          ),
+                        );
+                      }
+                    }
+                  }
                       : null,
                 );
               },

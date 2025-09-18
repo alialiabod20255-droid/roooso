@@ -8,12 +8,14 @@ class OrderCard extends StatelessWidget {
   final OrderModel order;
   final VoidCallback onTap;
   final VoidCallback? onCancel;
+  final VoidCallback? onAccept;
 
   const OrderCard({
     super.key,
     required this.order,
     required this.onTap,
     this.onCancel,
+    this.onAccept,
   });
 
   @override
@@ -104,10 +106,71 @@ class OrderCard extends StatelessWidget {
 
                   Row(
                     children: [
-                      if (onCancel != null)
+                      if (order.status == OrderStatus.pending && onAccept != null)
                         TextButton(
-                          onPressed: onCancel,
-                          child: Text(
+                          onPressed: () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('قبول الطلب'),
+                                content: const Text('هل أنت متأكد من قبول هذا الطلب؟'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: const Text('لا'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: const Text(
+                                      'نعم، قبول',
+                                      style: TextStyle(color: Colors.green),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirmed == true) {
+                              onAccept!();
+                            }
+                          },
+                          child: const Text(
+                            'قبول',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      if (order.status == OrderStatus.pending && onCancel != null)
+                        TextButton(
+                          onPressed: () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('إلغاء الطلب'),
+                                content: const Text('هل أنت متأكد من إلغاء هذا الطلب؟'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: const Text('لا'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: const Text(
+                                      'نعم، إلغاء',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirmed == true) {
+                              onCancel!();
+                            }
+                          },
+                          child: const Text(
                             'إلغاء',
                             style: TextStyle(
                               color: Colors.red,
@@ -115,7 +178,6 @@ class OrderCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                      
                       TextButton(
                         onPressed: onTap,
                         child: Text(

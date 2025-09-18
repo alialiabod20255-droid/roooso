@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -31,42 +32,84 @@ class VendorProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      await Future.wait([
-        _loadVendorProducts(vendorId),
-        _loadVendorOrders(vendorId),
-      ]);
+      // Load products first, then orders
+      await _loadVendorProducts(vendorId);
+      await _loadVendorOrders(vendorId);
 
       _calculateAnalytics();
+      if (kDebugMode) {
+        print('VendorProvider: Loaded data for vendorId: $vendorId');
+        print('VendorProvider: Products: ${_vendorProducts.length}, Orders: ${_vendorOrders.length}');
+      }
       notifyListeners();
     } catch (e) {
-      _setError('فشل تحميل بيانات البائع');
+      if (kDebugMode) {
+        print('VendorProvider: Error loading vendor data: $e');
+      }
+      _setError('فشل تحميل بيانات البائع: $e');
     } finally {
       _setLoading(false);
     }
   }
 
   Future<void> _loadVendorProducts(String vendorId) async {
-    final querySnapshot = await FirebaseService.productsCollection
-        .where('vendorId', isEqualTo: vendorId)
-        .orderBy('createdAt', descending: true)
-        .get();
+    try {
+      final querySnapshot = await FirebaseService.productsCollection
+          .where('vendorId', isEqualTo: vendorId)
+          .orderBy('createdAt', descending: true)
+          .get();
 
-    _vendorProducts = querySnapshot.docs
-        .map((doc) => ProductModel.fromFirestore(doc))
-        .toList();
+      _vendorProducts = querySnapshot.docs
+          .map((doc) => ProductModel.fromFirestore(doc))
+          .toList();
+
+      if (kDebugMode) {
+        print('VendorProvider: Loaded ${_vendorProducts.length} products for vendorId: $vendorId');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('VendorProvider: Error loading vendor products: $e');
+      }
+      throw Exception('Failed to load products: $e');
+    }
   }
 
   Future<void> _loadVendorOrders(String vendorId) async {
-    // Get orders that contain products from this vendor
-    final querySnapshot = await FirebaseService.ordersCollection
-        .orderBy('createdAt', descending: true)
-        .get();
+    try {
+      if (kDebugMode) {
+        print('VendorProvider: Loading orders for vendorId: $vendorId');
+      }
 
-    _vendorOrders = querySnapshot.docs
-        .map((doc) => OrderModel.fromFirestore(doc))
-        .where((order) => order.items.any((item) => 
-            _vendorProducts.any((product) => product.id == item.productId)))
-        .toList();
+      final querySnapshot = await FirebaseService.ordersCollection
+          .where('vendorId', isEqualTo: vendorId)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      final allOrders = querySnapshot.docs
+          .map((doc) => OrderModel.fromFirestore(doc))
+          .toList();
+
+      if (kDebugMode) {
+        print('VendorProvider: Number of orders fetched: ${querySnapshot.docs.length}');
+        print('VendorProvider: All orders: ${allOrders.length}');
+      }
+
+      // Filter orders that contain this vendor's products
+      _vendorOrders = allOrders.where((order) {
+        final hasVendorProducts = order.items.any((item) =>
+            _vendorProducts.any((product) => product.id == item.productId));
+        return hasVendorProducts;
+      }).toList();
+
+      if (kDebugMode) {
+        print('VendorProvider: Filtered vendor orders: ${_vendorOrders.length}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('VendorProvider: Error loading vendor orders: $e');
+      }
+      throw Exception('Failed to load orders: $e');
+    }
   }
 
   void _calculateAnalytics() {
@@ -74,7 +117,7 @@ class VendorProvider extends ChangeNotifier {
     _totalOrders = _vendorOrders.length;
     _totalRevenue = _vendorOrders
         .where((order) => order.status != OrderStatus.cancelled)
-        .fold(0, (sum, order) => sum + order.total);
+        .fold(0, (total, order) => total + order.total);
 
     // Calculate monthly revenue
     _monthlyRevenue.clear();
@@ -125,7 +168,7 @@ class VendorProvider extends ChangeNotifier {
       );
 
       final docRef = await FirebaseService.productsCollection.add(product.toFirestore());
-      
+
       _vendorProducts.insert(0, ProductModel(
         id: docRef.id,
         name: name,
@@ -146,9 +189,15 @@ class VendorProvider extends ChangeNotifier {
       ));
 
       _totalProducts = _vendorProducts.length;
+      if (kDebugMode) {
+        print('VendorProvider: Added product: $name (ID: ${docRef.id})');
+      }
       notifyListeners();
       return true;
     } catch (e) {
+      if (kDebugMode) {
+        print('VendorProvider: Error adding product: $e');
+      }
       _setError('فشل إضافة المنتج');
       return false;
     } finally {
@@ -162,7 +211,7 @@ class VendorProvider extends ChangeNotifier {
       _clearError();
 
       final updatedProduct = product.copyWith(updatedAt: DateTime.now());
-      
+
       await FirebaseService.productsCollection
           .doc(product.id)
           .update(updatedProduct.toFirestore());
@@ -170,11 +219,17 @@ class VendorProvider extends ChangeNotifier {
       final index = _vendorProducts.indexWhere((p) => p.id == product.id);
       if (index != -1) {
         _vendorProducts[index] = updatedProduct;
+        if (kDebugMode) {
+          print('VendorProvider: Updated product: ${product.name} (ID: ${product.id})');
+        }
         notifyListeners();
       }
 
       return true;
     } catch (e) {
+      if (kDebugMode) {
+        print('VendorProvider: Error updating product: $e');
+      }
       _setError('فشل تحديث المنتج');
       return false;
     } finally {
@@ -188,13 +243,19 @@ class VendorProvider extends ChangeNotifier {
       _clearError();
 
       await FirebaseService.productsCollection.doc(productId).delete();
-      
+
       _vendorProducts.removeWhere((product) => product.id == productId);
       _totalProducts = _vendorProducts.length;
+      if (kDebugMode) {
+        print('VendorProvider: Deleted product: $productId');
+      }
       notifyListeners();
 
       return true;
     } catch (e) {
+      if (kDebugMode) {
+        print('VendorProvider: Error deleting product: $e');
+      }
       _setError('فشل حذف المنتج');
       return false;
     } finally {
@@ -216,11 +277,17 @@ class VendorProvider extends ChangeNotifier {
           updatedAt: DateTime.now(),
         );
         _calculateAnalytics();
+        if (kDebugMode) {
+          print('VendorProvider: Updated order status for ID: $orderId to $status');
+        }
         notifyListeners();
       }
 
       return true;
     } catch (e) {
+      if (kDebugMode) {
+        print('VendorProvider: Error updating order status: $e');
+      }
       _setError('فشل تحديث حالة الطلب');
       return false;
     }

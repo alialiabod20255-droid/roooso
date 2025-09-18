@@ -62,6 +62,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             return;
           }
 
+          // في ملف product_details_page.dart، داخل دالة _showOptionsSheet
+          // في product_details_page.dart
           await cartProvider.addToCart(
             userId: authProvider.currentUser!.id,
             productId: _product!.id,
@@ -73,8 +75,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             selectedColor: options['color'],
             giftWrap: options['giftWrap'],
             greetingCard: options['greetingCard'],
+            vendorId: _product!.vendorId, // Pass vendorId from ProductModel
           );
-
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

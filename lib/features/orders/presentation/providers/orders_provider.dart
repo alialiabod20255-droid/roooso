@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -28,8 +29,14 @@ class OrdersProvider extends ChangeNotifier {
           .map((doc) => OrderModel.fromFirestore(doc))
           .toList();
 
+      if (kDebugMode) {
+        print('Orders loaded for userId $userId: ${_orders.length} orders');
+      }
       notifyListeners();
     } catch (e) {
+      if (kDebugMode) {
+        print('Error loading orders: $e');
+      }
       _setError('فشل تحميل الطلبات');
     } finally {
       _setLoading(false);
@@ -40,6 +47,7 @@ class OrdersProvider extends ChangeNotifier {
     required String userId,
     required String userEmail,
     required String userName,
+    String? vendorId,
     required List<CartItemModel> items,
     required double subtotal,
     required double tax,
@@ -59,6 +67,7 @@ class OrdersProvider extends ChangeNotifier {
         userId: userId,
         userEmail: userEmail,
         userName: userName,
+        vendorId: vendorId,
         items: items,
         subtotal: subtotal,
         tax: tax,
@@ -73,13 +82,13 @@ class OrdersProvider extends ChangeNotifier {
       );
 
       final docRef = await FirebaseService.ordersCollection.add(order.toFirestore());
-      
-      final createdOrder = order.copyWith();
-      _orders.insert(0, OrderModel(
-        id: docRef.id,
+
+      final createdOrder = OrderModel(
+        id: docRef.id, // Set ID explicitly
         userId: userId,
         userEmail: userEmail,
         userName: userName,
+        vendorId: vendorId,
         items: items,
         subtotal: subtotal,
         tax: tax,
@@ -91,11 +100,19 @@ class OrdersProvider extends ChangeNotifier {
         notes: notes,
         createdAt: order.createdAt,
         updatedAt: order.updatedAt,
-      ));
+      );
 
+      _orders.insert(0, createdOrder);
+
+      if (kDebugMode) {
+        print('Order created with ID: ${docRef.id}');
+      }
       notifyListeners();
       return createdOrder;
     } catch (e) {
+      if (kDebugMode) {
+        print('Error creating order: $e');
+      }
       _setError('فشل إنشاء الطلب');
       return null;
     } finally {
@@ -105,12 +122,25 @@ class OrdersProvider extends ChangeNotifier {
 
   Future<OrderModel?> getOrder(String orderId) async {
     try {
+      if (kDebugMode) {
+        print('Fetching order with ID: $orderId');
+      }
       final doc = await FirebaseService.ordersCollection.doc(orderId).get();
       if (doc.exists) {
+        if (kDebugMode) {
+          print('Order found: ${doc.id}');
+        }
         return OrderModel.fromFirestore(doc);
+      } else {
+        if (kDebugMode) {
+          print('Order not found: $orderId');
+        }
+        return null;
       }
-      return null;
     } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching order: $e');
+      }
       _setError('فشل تحميل الطلب');
       return null;
     }
@@ -131,7 +161,13 @@ class OrdersProvider extends ChangeNotifier {
         );
         notifyListeners();
       }
+      if (kDebugMode) {
+        print('Order status updated for ID: $orderId to $status');
+      }
     } catch (e) {
+      if (kDebugMode) {
+        print('Error updating order status: $e');
+      }
       _setError('فشل تحديث حالة الطلب');
     }
   }
@@ -139,7 +175,13 @@ class OrdersProvider extends ChangeNotifier {
   Future<void> cancelOrder(String orderId) async {
     try {
       await updateOrderStatus(orderId, OrderStatus.cancelled);
+      if (kDebugMode) {
+        print('Order cancelled: $orderId');
+      }
     } catch (e) {
+      if (kDebugMode) {
+        print('Error cancelling order: $e');
+      }
       _setError('فشل إلغاء الطلب');
     }
   }

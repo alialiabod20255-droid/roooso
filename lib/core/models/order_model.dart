@@ -20,6 +20,7 @@ class OrderModel {
   final String userId;
   final String userEmail;
   final String userName;
+  final String? vendorId;
   final List<CartItemModel> items;
   final double subtotal;
   final double tax;
@@ -39,6 +40,7 @@ class OrderModel {
     required this.userId,
     required this.userEmail,
     required this.userName,
+    this.vendorId,
     required this.items,
     required this.subtotal,
     required this.tax,
@@ -61,6 +63,7 @@ class OrderModel {
       userId: data['userId'] ?? '',
       userEmail: data['userEmail'] ?? '',
       userName: data['userName'] ?? '',
+      vendorId: data['vendorId'],
       items: (data['items'] as List<dynamic>?)
           ?.map((item) => CartItemModel(
                 id: item['id'] ?? '',
@@ -104,6 +107,7 @@ class OrderModel {
       'userId': userId,
       'userEmail': userEmail,
       'userName': userName,
+      'vendorId': vendorId,
       'items': items.map((item) => {
         'id': item.id,
         'productId': item.productId,
@@ -155,12 +159,14 @@ class OrderModel {
     DateTime? updatedAt,
     DateTime? deliveryDate,
     String? notes,
+    String? vendorId,
   }) {
     return OrderModel(
       id: id,
       userId: userId,
       userEmail: userEmail,
       userName: userName,
+      vendorId: vendorId ?? this.vendorId,
       items: items,
       subtotal: subtotal,
       tax: tax,
